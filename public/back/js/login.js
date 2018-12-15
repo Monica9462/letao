@@ -103,12 +103,11 @@ $(function() {
 
   //   ____________________________________________________________________________
   // 3.功能3重置功能
-  $('#box').click(function() {
-    alert(2121)
+  $('[type="reset"]').click(function() {
+    // alert(2121)
     // 除了重置文本, 还要重置校验状态
-    $('#form')
-      .data('bootstrapValidator')
-      .resetForm()
+    $('#form').data('bootstrapValidator').resetForm()
   })
   console.log($('[type=reset]'))
+
 })
