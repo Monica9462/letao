@@ -87,7 +87,7 @@ ul {
 }
 
 .lt_aside .nav a.current {
-  background-color: #1d1f21;
+  background-color: #1D1F21;
   border-left: 3px solid #006699;
 }
 
@@ -124,6 +124,7 @@ ul {
   top: 0;
   padding-left: 180px;
   transition: all 1s;
+  z-index: 666;
 }
 .lt_topbar.hidemenu {
   padding-left: 0;
