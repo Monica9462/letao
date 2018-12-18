@@ -59,7 +59,7 @@ $(document).ajaxStop(function() {
   setTimeout(function() {
     //   结束进度条
     NProgress.done()
-  }, 500)
+  },.1)
 })
 
 // 等待页面dom结构的加载后执行

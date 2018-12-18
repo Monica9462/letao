@@ -20,6 +20,7 @@ $(function() {
         pageSize: pageSize
       },
       success: function( info ) {
+        console.log(info);
         var htmlStr = template( "secondTpl", info );
         $('.lt_content tbody').html( htmlStr );
 
