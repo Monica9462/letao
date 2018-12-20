@@ -1,97 +1,89 @@
-/**
- * Created by Jepson on 2018/4/7.
- */
-
 $(function() {
+  // 一进到user.html就发送ajax请求开始渲染页面
+  var currentPage = 1
+  var pageSize = 5
+  var currentId //当前修改的用户id
+  var isDelete //当前修改的用户状态
+  render() //   一进到页面就开始调用render方法
 
-  // 当前页
-  var currentPage = 1;
-  // 一页多少条
-  var pageSize = 5;
-
-  // 1. 一进入页面, 进行渲染
-  render();
-
+//   1.1 封装渲染页面的方法
   function render() {
-    // 发送请求, 获取表格渲染的数据
     $.ajax({
-      type: "get",
-      url: "/user/queryUser",
+      url: '/user/queryUser',
+      type: 'get',
       data: {
         page: currentPage,
         pageSize: pageSize
       },
-      success: function( info ) {
-        console.log( info );
-        // 参数2 必须是一个对象
-        // 在模板中可以任意使用对象中的属性
-        // isDelete 表示用户的启用状态, 1就是启用, 0就是禁用
-        var htmlStr = template( "tpl", info );
-        $('.lt_content tbody').html( htmlStr );
+      dataType: 'json',
+      success: function(e) {
+        console.log(e)
 
+        // template( 模板id, 数据对象 )  在模板中可以任意使用数据对象的所有属性
+        var htmlStr = template('tml', e)
 
-        // 配置分页
+        $('tbody').html(htmlStr)
+
+        // 1.2根据返回的数据, 实现动态渲染分页插件
         $('#paginator').bootstrapPaginator({
-          // 指定bootstrap版本
+          // 版本号
           bootstrapMajorVersion: 3,
-          // 当前页
-          currentPage: info.page,
+          //当前号
+          currentPage: e.page,
           // 总页数
-          totalPages: Math.ceil( info.total / info.size ),
+          totalPages: Math.ceil(e.total / e.size),
 
-          // 当页面被点击时触发
-          onPageClicked: function( a, b, c, page ) {
-            // page 当前点击的页码
-            currentPage = page;
-            // 调用 render 重新渲染页面
-            render();
+          // 添加页码点击事件
+          onPageClicked: function(a, b, c, page) {
+            console.log(page)
+            // 更新当前页
+            currentPage = page //没有这一步就没法重新渲染页面
+            //重新渲染页面
+            render()
           }
-        });
-
+        })
       }
-    });
+    })
   }
 
 
-  // 2. 通过事件委托给 按钮注册点击事件
-  $('.lt_content tbody').on("click", ".btn", function() {
-    console.log( "呵呵额" );
-    // 弹出模态框
-    $('#userModal').modal("show");
 
-    // 用户 id
-    var id = $(this).parent().data("id");
-    // 获取将来需要将用户置成什么状态
-    var isDelete = $(this).hasClass("btn-success") ? 1 : 0;
-    console.log( id );
-    console.log(isDelete);
-
-    // 先解绑, 再绑定事件, 可以保证只有一个事件绑定在 按钮上
-    $('#submitBtn').off("click").on("click", function() {
-
-      $.ajax({
-        type: "post",
-        url: "/user/updateUser",
-        data: {
-          id: id,
-          isDelete: isDelete
-        },
-        success: function( info ) {
-          console.log( info )
-          if ( info.success ) {
-            // 关闭模态框
-            $('#userModal').modal("hide");
-            // 重新渲染
-            render();
-          }
-        }
-      })
-
-
-    })
+  // 2.给所有的按钮, 添加点击事件 (通过事件委托注册)
+  $('tbody').on('click', '.btn', function() {
+    // 点击显示模态框
+    //  alert(1)
+    $('#userModal').modal('show')
+    // 获取存储的 id
+    currentId = $(this)
+      .parent()
+      .data('id')
+    // 1 启用状态, 0 禁用状态, 给后台传几, 就是将用户改成对应状态
+    // 禁用按钮 ? 0 : 1
+    isDelete = $(this).hasClass('btn-danger') ? 0 : 1
   })
 
 
 
+    // 3.点击模态框确认按钮, 发送请求, 完成启用禁用功能
 
+    $('#submitBtn').click(function () {
+        $.ajax({
+           url:'/user/updateUser',
+           type:'post',
+           data:{
+               id:currentId,
+               isDelete:isDelete
+           },
+           dataType:'json',
+           success:function (e) {
+               console.log(e)
+              if (e.success) {
+                  // 修改成功/,关闭模态框
+                  $('#userModal').modal('hide')
+                  //重新渲染页面
+                  render()
+              } 
+           }
+        })
+    })
 })
