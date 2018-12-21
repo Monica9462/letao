@@ -1,108 +1,92 @@
 /**
- * Created by 54721 on 2018/12/15.
+ * Created by Jepson on 2018/4/7.
  */
+
+
 $(function() {
-    // 绘制柱状图
-    // 基于准备好的dom，初始化echarts实例
-    var echarts_left = echarts.init(document.querySelector(".echarts_left"));
-  
-    // 指定图表的配置项和数据
-    var option1 = {
-      // 大标题
-      title: {
-        // 标题文本
-        text: '黑马学习人数'
-      },
-      // 提示框组件
-      tooltip: {},
-      // 图例
-      legend: {
-        data:['人数', '销量']
-      },
-      // x轴的数据
-      xAxis: {
-        data: ["1月","2月","3月","4月","5月","6月"]
-      },
-      // y轴的数据, y轴一般不配置, 根据数据自动生成刻度
-      yAxis: {},
-      series: [{
-        name: '人数',
-        type: 'bar',   // bar 表示柱状图  line 折线图   pie 饼图
-        data: [500, 400, 1000, 600, 700, 400]
-      },{
-        name: '销量',
-        type: 'bar',
-        data: [1500, 700, 400, 550, 400, 700]
-      }]
-    };
-  
-    // 使用刚指定的配置项和数据显示图表。
-    echarts_left.setOption(option1);
-  
-  
-  
-    // 绘制饼图
-    // 基于准备好的dom，初始化echarts实例
-    var echarts_right = echarts.init(document.querySelector(".echarts_right"));
-  
-    // 指定图表的配置项和数据
-    var option2 = {
-      // 标题组件
-      title : {
-        // 主标题文本
-        text: '喜欢买的品牌',
-        // 副标题文本
-        subtext: '2088年12月',
-        // 控制标题水平方向位置
-        x:'center',
-  
-        // 标题文本样式
-        textStyle: {
-          color: "lime",
-          fontSize: 32
-        }
-      },
-      // 提示框组件
-      tooltip : {
-        trigger: 'item',
-        // 配置提示框的内容
-        // {a}（系列名称），{b}（数据项名称），{c}（数值）, {d}（百分比）
-        formatter: "{a} <br/>{b} : {c} ({d}%)"
-      },
-      // 图例
-      legend: {
-        // 设置对齐方式  horizontal 水平
-        orient: 'vertical',
-        left: 'left',
-        data: ['耐克','阿迪','斯凯奇','Newblance','达芙妮']
-      },
-      // 系列列表
-      series : [
-        {
-          name: '喜欢品牌',
-          type: 'pie',   // 饼图
-          radius : '55%', // 圆的大小
-          center: ['50%', '60%'],  // 圆心位置
-          data:[
-            {value:335, name:'耐克'},
-            {value:310, name:'阿迪'},
-            {value:234, name:'斯凯奇'},
-            {value:135, name:'Newblance'},
-            {value:1548, name:'达芙妮'}
-          ],
-          // 控制额外的阴影样式效果
-          itemStyle: {
-            emphasis: {
-              shadowBlur: 100,
-              shadowOffsetX: 0,
-              shadowColor: 'hotpink'
-            }
+  // 基于准备好的dom，初始化echarts实例
+  // 柱状图
+  var echars1 = echarts.init(document.querySelector(".echarts_1"));
+
+  // 指定图表的配置项和数据
+  var option1 = {
+    // 大标题
+    title: {
+      text: '2017年注册人数'
+    },
+    // 提示框组件
+    tooltip: {},
+    // 图例
+    legend: {
+      data:['人数']
+    },
+    // x轴的数据
+    xAxis: {
+      data: ["1月","2月","3月","4月","5月","6月"]
+    },
+    // y 轴的刻度, 根据数据自动生成比较合适
+    yAxis: {},
+    // 数据
+    series: [{
+      name: '人数',
+      // 表示柱状图
+      type: 'bar',
+      data: [1000, 1500, 1800, 1200, 1000, 500]
+    }]
+  };
+
+  // 使用刚指定的配置项和数据显示图表。
+  echars1.setOption(option1);
+
+
+  var echars2 = echarts.init(document.querySelector(".echarts_2"));
+  option2 = {
+    title : {
+      text: '热门品牌销售',
+      // 子标题
+      subtext: '2017年6月',
+      // 水平居中
+      x:'center'
+    },
+    tooltip : {
+      trigger: 'item',
+      formatter: "{a} <br/>{b} : {c} ({d}%)"
+    },
+    // 图例
+    legend: {
+      // 垂直排列
+      orient: 'vertical',
+      // 居左显示
+      left: 'left',
+      data: ['耐克','阿迪','新百伦','李宁','阿迪王']
+    },
+    series : [
+      {
+        name: '品牌',
+        // 饼状图
+        type: 'pie',
+        // 圆的大小
+        radius : '50%',
+        // 圆心的位置
+        center: ['50%', '60%'],
+        data:[
+          {value:335, name:'耐克'},
+          {value:310, name:'阿迪'},
+          {value:234, name:'新百伦'},
+          {value:135, name:'李宁'},
+          {value:1548, name:'阿迪王'}
+        ],
+        itemStyle: {
+          // 设置阴影效果
+          emphasis: {
+            shadowBlur: 30,
+            shadowOffsetX: 0,
+            shadowColor: 'rgba(0, 0, 0, 1)'
           }
         }
-      ]
-    };
-  
-    // 使用刚指定的配置项和数据显示图表。
-    echarts_right.setOption(option2);
-  })
-  
+      }
+    ]
+  };
+  // 使用刚指定的配置项和数据显示图表。
+  echars2.setOption(option2);
+})

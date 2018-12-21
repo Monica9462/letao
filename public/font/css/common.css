@@ -1,0 +1,108 @@
+html,
+body {
+  width: 100%;
+  height: 100%;
+}
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+img {
+  display: block;
+  width: 100%;
+}
+
+.It_container {
+  background-color: aquamarine;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  min-width: 320px;
+  max-width: 640px;
+  margin: 0 auto;
+  padding-top: 45px;
+  padding-bottom: 55px;
+  position: relative;
+}
+
+.It_container .It_header {
+  width: 100%;
+  height: 45px;
+  background-color: #006699;
+  position: absolute;
+  left: 0;
+  top: 0;
+  padding: 0 45px;
+}
+
+.It_header .icon_left,
+.It_header .icon_right {
+  width: 45px;
+  height: 45px;
+  line-height: 45px;
+  position: absolute;
+  top: 0;
+  text-align: center;
+  color: #fff;
+}
+
+.It_header .icon_left{
+    left: 0;
+}
+
+.It_header .icon_right{
+   right: 0;
+}
+
+.It_header h3{
+    text-align: center;
+    line-height: 45px;
+    color: #fff;
+    font-size: 20px;
+    font-weight: normal;
+    margin: 0;
+}
+
+.It_footer{
+    width: 100%;
+    height: 55px;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    background:#006699;
+}
+
+.It_footer li{
+    width: 25%;
+    float: left;
+    text-align: center;
+}
+
+.It_footer li a{
+    display: block;
+    padding-top:8px;
+    color: #fff;
+}
+
+.It_footer li a p{
+    margin: 0;
+    color: #fff;
+}
+
+.It_footer li a.current{
+    color: orange;
+}
+
+.It_footer li a.current p{
+    color: orange;
+}
+
+
+.It_main{
+    width: 100%;
+    height: 100%;
+    background: #fff;
+    position: relative;
+}

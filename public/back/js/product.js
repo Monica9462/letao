@@ -1,16 +1,13 @@
-/**
- * Created by Jepson on 2018/4/9.
- */
-
 $(function() {
-  var currentPage = 1 // 当前页
-  var pageSize = 2 // 一页多少条
+  // 一进到页面发送ajax请求,动态渲染表格
+  var currentPage = 1 //当前页
+  var pageSize = 3 //每页条数
   var picArr = [] // 专门用来保存图片对象
-
-  // 1. 一进入页面就进行页面渲染
   render()
 
+  //功能一.封装渲染页面的方法
   function render() {
+    // 1.1发送ajax请求
     $.ajax({
       url: '/product/queryProductDetailList',
       type: 'get',
@@ -18,23 +15,22 @@ $(function() {
         page: currentPage,
         pageSize: pageSize
       },
-      success: function(info) {
-        console.log(info)
-        // 将模板与数据对象相结合, 渲染到页面中
-        var htmlStr = template('productTpl', info)
-        $('.lt_content tbody').html(htmlStr)
+      dataType: 'json',
+      success: function(e) {
+        //发送请求成功,则开始渲染页面
+        var htmlStr = template('productTpl', e)
+        $('tbody').html(htmlStr)
 
-        // 进行分页初始化
+        //1.2引入分页插件
         $('#paginator').bootstrapPaginator({
-          // 指定版本
           bootstrapMajorVersion: 3,
-          // 当前页
-          currentPage: info.page,
-          // 总页数
-          totalPages: Math.ceil(info.total / info.size),
-          // 给下面的页码添加点击事件
+          currentPage: e.page,
+          totalPages: Math.ceil(e.total / e.size),
+          // 给页码添加点击事件
           onPageClicked: function(a, b, c, page) {
+            // 更新当前页
             currentPage = page
+            // 重新渲染
             render()
           }
         })
@@ -42,11 +38,11 @@ $(function() {
     })
   }
 
-  // 2. 点击添加按钮, 显示添加模态框
+  // 功能二.点击添加商品,显示模态框
   $('#addBtn').click(function() {
     $('#addModal').modal('show')
 
-    // 发送 ajax 请求, 请求二级分类列表数据, 进行渲染下拉菜单
+    // 发送ajax请求, 渲染下拉列表, 获取全部的二级分类
     $.ajax({
       url: '/category/querySecondCategoryPaging',
       type: 'get',
@@ -54,40 +50,38 @@ $(function() {
         page: 1,
         pageSize: 100
       },
-      success: function(info) {
-        console.log(info)
-        var htmlStr = template('dropdownTpl', info)
+      dataType: 'json',
+      success: function(e) {
+        var htmlStr = template('dropdownTpl', e)
         $('.dropdown-menu').html(htmlStr)
-
-        // 注意: 不要在事件处理函数中, 注册事件,
-        //       会重复注册事件
       }
     })
   })
 
-  // 3. 注册事件委托, 给 a 注册点击事件
+  //   功能三.给所有的下拉框的 a 添加点击事件
+  //   时间委托因为所有a都是动态渲染的 ul是他的爷爷 class=dropdown-menu
   $('.dropdown-menu').on('click', 'a', function() {
-    console.log('呵呵')
+    
     // 获取选择的文本内容
-    var txt = $(this).text()
+    var text = $(this).text()
     // 获取存在自定义属性中的 id
     // 存的时候, data-id,
     // 取的时候, 直接 $(this).data("id") 不需要加上 前面的 data-
     var id = $(this).data('id')
-
-    $('#dropdownText').text(txt)
+    $('#dropdownText').text(text)
     // 设置隐藏域
     $('[name="brandId"]').val(id)
+    // 最后把input里的内容都晴空下
+    $("#form").data('bootstrapValidator').updateStatus('brandId', 'VALID')
   })
 
-  // 4. 配置上传图片回调函数
+  //   功能四.配置多照片上传回调函数
   $('#fileupload').fileupload({
     // 返回数据类型
     dataType: 'json',
     // 上传完图片, 响应的回调函数配置
     // 每一张图片上传, 都会响应一次
     done: function(e, data) {
-      console.log(data)
       // 获取图片地址对象
       var picObj = data.result
       // 获取图片地址
@@ -117,7 +111,7 @@ $(function() {
     }
   })
 
-  // 5. 配置表单校验
+  //五.配置表单校验
   $('#form').bootstrapValidator({
     // 将默认的排除项, 重置掉 (默认会对 :hidden, :disabled等进行排除)
     excluded: [],
@@ -213,27 +207,26 @@ $(function() {
       }
     }
   })
+  
 
-  // 6. 注册校验成功事件
+  // 六. 注册校验成功事件
   $('#form').on('success.form.bv', function(e) {
-    // 阻止默认的提交
+    //阻止默认的提交
     e.preventDefault()
-
     // 表单提交得到的参数字符串
     var params = $('#form').serialize()
 
     // 拼接上所有的图片参数
+    // params = params + '&picArr=' + JSON.stringify(picArr)
     params += '&picArr=' + JSON.stringify(picArr)
-
     // 通过 ajax 进行添加请求
     $.ajax({
       url: '/product/addProduct',
       type: 'post',
       data: params,
-      success: function(info) {
-        console.log(info)
-        if (info.success) {
-          // 关闭模态框
+      success: function(e) {
+        if (e.success) {
+          //关闭模态框
           $('#addModal').modal('hide')
           // 重置校验状态和文本内容
           $('#form')
@@ -242,10 +235,8 @@ $(function() {
           // 重新渲染第一页
           currentPage = 1
           render()
-
           // 手动重置, 下拉菜单
-          $('#dropdownText').text('请选择二级分类')
-
+          $('#dropdownText').text('请输入二级分类')
           // 删除结构中的所有图片
           $('#imgBox img').remove()
           // 重置数组 picArr
